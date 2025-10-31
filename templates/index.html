@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Blind Stick Alert Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Overall Styling */
+    body {
+      font-family: "Times New Roman", Times, serif;
+      background: linear-gradient(120deg, #001f3f, #005d91);
+      background-size: 200% 200%;
+      animation: backgroundAnimation 15s ease infinite;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #f8f8f8;
+    }
+
+    @keyframes backgroundAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Info Button */
+    .info-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .info-button:hover {
+      color: #ffa500;
+    }
+
+    /* Container Styling */
+    .container {
+      background: radial-gradient(circle, #303c57, #2a2f45, #1e2235);
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+      width: 90%;
+      max-width: 800px;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Project Name Styling */
+    h1 {
+      font-size: 60px;
+      font-weight: bold;
+      color: #fafafa;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(45deg, #ffa500, #ff0040, #32cd32);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textGlow 3s ease infinite;
+    }
+
+    @keyframes textGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Creators Styling */
+    h2 {
+      font-size: 26px;
+      color: #cfcfcf;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px #000;
+    }
+
+    /* Alert Counter Styling */
+    #alert-counter {
+      font-size: 22px;
+      color: #ffd700;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    /* Clock Styling */
+    #clock {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #a0a0a0;
+      text-shadow: 1px 1px #000;
+    }
+
+    /* Alert Box */
+    #alert-box {
+      margin-top: 20px;
+      overflow-y: auto;
+      max-height: 400px;
+      padding: 20px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 18px;
+    }
+
+    /* Individual Alerts */
+    .alert-message {
+      background: linear-gradient(135deg, #33334d, #555577);
+      border-left: 10px solid #0288d1;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 24px;
+      color: #fafafa;
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      animation: slideIn 0.5s ease;
+      flex-direction: column;
+    }
+
+    .alert-message.sos {
+      background: linear-gradient(135deg, #552020, #aa2e2e);
+      border-left: 10px solid #e53935;
+      color: #ffb3b3;
+    }
+
+    .alert-message.current {
+      border: 2px solid #ffffff;
+      animation: blinkBorder 1s infinite;
+    }
+
+    /* Slide-in Animation */
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Blinking Border */
+    @keyframes blinkBorder {
+      0%, 100% { border-color: #ffffff; }
+      50% { border-color: transparent; }
+    }
+
+    .alert-message i {
+      margin-bottom: 10px;
+      font-size: 30px;
+    }
+
+    /* Popup Styling */
+    #info-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1e2235;
+      padding: 30px;
+      border-radius: 15px;
+      color: #fff;
+      z-index: 1000;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+      text-align: center;
+    }
+
+    #info-popup h3 {
+      font-size: 28px;
+      color: #ffa500;
+      margin-bottom: 20px;
+    }
+
+    #info-popup p {
+      font-size: 18px;
+      color: #f0f0f0;
+      line-height: 1.5;
+    }
+
+    #info-popup b {
+      color: #ff0040;
+    }
+
+    /* Popup Close Button */
+    #close-popup {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #ffa500;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="info-popup">
+    <h3>Project Details</h3>
+    <p>
+      This is the <b>Smart Blind Stick Project</b>, created by <b>Jinay Shah</b> and <b>Maahi Patel</b>. 
+      The stick is designed to assist visually impaired individuals by providing <b>real-time obstacle detection</b> 
+      and sending <b>SOS alerts</b> during emergencies.
+    </p>
+    <p>
+      The project leverages technologies like <b>ESP32</b>, <b>HTTP protocol</b>, and <b>ultrasonic sensors</b>. 
+      It aims to ensure safety and independence for users by connecting seamlessly to a dashboard for live updates.
+    </p>
+    <button id="close-popup" onclick="closeInfo()">Close</button>
+  </div>
+
+  <div class="container">
+    <button class="info-button" onclick="showInfo()"><i class="fas fa-info-circle"></i></button>
+    <div id="clock">Loading time...</div>
+    <h1>Smart Blind Stick</h1>
+    <h2>Creators: Jinay Shah and Maahi Patel</h2>
+    <div id="alert-counter">Total Alerts: 0</div>
+    <div id="alert-box">
+      <!-- Alerts will appear here -->
+    </div>
+  </div>
+
+  <!-- Include Socket.IO client library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+
+    function showInfo() {
+      document.getElementById("info-popup").style.display = "block";
+    }
+
+    function closeInfo() {
+      document.getElementById("info-popup").style.display = "none";
+    }
+
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      document.getElementById("clock").textContent = `Current Time: ${hours}:${minutes} ${ampm}`;
+    }
+    setInterval(updateClock, 1000);
+
+    let alertCount = 0;
+    let previousAlert = null;
+
+    socket.on("new_alert", (data) => {
+      const alertBox = document.getElementById("alert-box");
+      const message = document.createElement("div");
+      message.classList.add("alert-message");
+
+      let icon = '<i class="fas fa-exclamation-triangle"></i>';
+      if (data.message.toLowerCase().includes("sos")) {
+        message.classList.add("sos");
+        icon = '<i class="fas fa-hands-helping"></i>';
+      }
+
+      if (previousAlert) {
+        previousAlert.classList.remove("current");
+      }
+      message.classList.add("current");
+      previousAlert = message;
+
+      message.innerHTML = `
+        <span style="font-size: 20px;">Alert - ${++alertCount}</span>
+        ${icon}
+        <div style="font-size: 30px; background: linear-gradient(45deg, #ff0000, #ffff00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${data.message}</div>
+        <div style="font-size: 18px; color: #ccc;">Date: ${data.timestamp.split(" ")[0]} | Time: ${formatTo12Hour(data.timestamp.split(" ")[1])}</div>
+      `;
+
+      alertBox.insertBefore(message, alertBox.firstChild);
+      document.getElementById("alert-counter").textContent = `Total Alerts: ${alertCount}`;
+    });
+
+    function formatTo12Hour(time) {
+      const [hours, minutes, seconds] = time.split(":");
+      let hour = parseInt(hours, 10);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      hour = hour % 12 || 12;
+      return `${hour}:${minutes}:${seconds} ${ampm}`;
+    }
+  </script>
+</body>
+</html>
